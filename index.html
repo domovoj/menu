@@ -12,7 +12,7 @@
             .frame-menu ul{list-style: none;}
             .frame-menu ul:after{visibility: hidden;display: block;font-size: 0;content: ".";clear: both;height: 0;}
 
-            .frame-menu ul ul{display: none;width: 150px;top: 0;}
+            .frame-menu ul ul{display: none;width: 150px;top: 100%;}
             .frame-menu td > ul{top: auto;}
 
             .menu2{width: 500px;}
@@ -85,7 +85,7 @@
                                 $this.children().children().appendTo($this.parent());
                                 $this.remove();
                             });
-                            
+
                             menu.find('.' + opt.hoverClass).removeClass(opt.hoverClass);
                             menu.find('.' + opt.activeClass).removeClass(opt.activeClass);
                             menu.find('.' + opt.openClass).removeClass(opt.openClass);
@@ -101,14 +101,14 @@
                                 return false;
 
                             var opt = $.extend({}, $.menu.dP, options, menu.data());
-                            menu.data('menu', opt).css('position', 'relative').attr('data-rel', 'menu');
+                            menu.data('menu', opt).css('position', 'relative').attr('data-menu', '');
                             opt.drops = {};
                             opt.items = {};
                             opt.anchors = {};
                             opt.levels = opt.levels || {};
 
                             //Definition 4 above main objects initialized
-                            methods.getElements.call(menu, opt);
+                            methods._getElements.call(menu, opt);
 
                             //set data sub for handler event click for links
                             for (var i in opt.anchors)
@@ -248,7 +248,7 @@
                                     });
                                 }
                             }
-                            methods.getElements.call(menu, opt);
+                            methods._getElements.call(menu, opt);
 
                             //show subs which have option show: true
                             for (var i in opt.levels)
@@ -306,7 +306,86 @@
 
                         });
                     },
-                    getElements: function(opt) {
+                    show: function(j, opt) {
+                        opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
+                        return $(this).addClass(opt.hoverClass).each(function() {
+                            var i = j ? j : methods._getIndex.call($(this), opt.items);
+                            var sub = $(this).data('show', true).find(opt.drops[+i + 1]);
+
+                            if (!$.existsN(sub))
+                                return false;
+
+                            if (sub.data('timeout'))
+                                clearTimeout(sub.data('timeout'));
+                            (function(i, sub) {
+                                sub.data().timeout = setTimeout($.proxy(function() {
+                                    this.addClass(opt.openClass)[opt.levels[i].effectOn](!j ? 0 : opt.levels[i].durationOn, function(e) {
+                                        var $this = $(this);
+                                        $this.css('overflow', '');
+                                        methods.sizeDrop.call($this);
+                                        methods.sizeDrop.call($this.find('.' + opt.openClass + ':visible').last());
+                                    });
+                                }, sub), !j ? 0 : opt.levels[i].delay);
+                            })(i, sub);
+
+                            i = undefined;
+                        });
+                    },
+                    hide: function(i, opt) {
+                        opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
+                        var _hide = arguments.callee;
+                        return $(this).removeClass(opt.hoverClass).each(function() {
+                            i = i ? i : methods._getIndex.call($(this), opt.items);
+                            var sub = $(this).data('show', false).find(opt.drops[+i + 1]),
+                                    timeout = sub.data('timeout');
+
+                            if (sub.data('firstActive'))
+                                return false;
+
+                            clearTimeout(timeout);
+                            (function(i, sub) {
+                                sub.removeClass(opt.openClass).stop()[opt.levels[i].effectOff](opt.levels[i].durationOff, function(e) {
+                                    var $this = $(this);
+                                    $this.css({'width': '', 'height': ''});
+                                    methods.sizeDrop.call($this.data('parent').filter(':visible'));
+                                    if (opt.levels[i].closeInsideLevel)
+                                        _hide.call($this.find('.' + opt.hoverClass).first());
+                                });
+                            })(i, sub);
+
+                            i = undefined;
+                        });
+                    },
+                    sizeDrop: function() {
+                        var height = 0;
+
+                        this.reverse().each(function() {
+                            var $this = $(this),
+                                    data = $this.data();
+
+                            $this.css('height', '');
+                            $this.css('width', $this.data('width'));
+                            if (data.relative && data.parent) {
+                                height = height > $this.actual('height') ? height : $this.actual('height');
+                                $this.css('height', height);
+                                arguments.callee.call(data.parent);
+                            }
+                            else
+                                return false;
+                        });
+                    },
+                    refresh: function(opt) {
+                        methods.init.call(this, $.extend({}, opt ? opt : this.data('menu'), {
+                            refresh: true
+                        }));
+                        return this;
+                    },
+                    _getIndex: function(obj) {
+                        for (var i in obj)
+                            if (this.is(obj[i]))
+                                return +i;
+                    },
+                    _getElements: function(opt) {
                         opt.countLevels = 0;
                         (function() {
                             var level = 0;
@@ -340,88 +419,6 @@
                             };
                         })()(this);
                         return this;
-                    },
-                    show: function(j, opt) {
-                        opt = opt ? opt : $(this).closest('[data-rel="menu"]').data('menu');
-                        return $(this).addClass(opt.hoverClass).each(function() {
-                            var i = j ? j : methods._getIndex.call($(this), opt.items);
-                            var sub = $(this).data('show', true).find(opt.drops[+i + 1]);
-
-                            if (!$.existsN(sub))
-                                return false;
-
-                            if (sub.data('timeout'))
-                                clearTimeout(sub.data('timeout'));
-                            (function(i, sub) {
-                                sub.data().timeout = setTimeout($.proxy(function() {
-                                    this.addClass(opt.openClass)[opt.levels[i].effectOn](!j ? 0 : opt.levels[i].durationOn, function(e) {
-                                        var $this = $(this);
-                                        $this.css('overflow', '');
-                                        methods.sizeDrop.call($this);
-                                        methods.sizeDrop.call($this.find('.' + opt.openClass + ':visible').last());
-                                    });
-                                }, sub), !j ? 0 : opt.levels[i].delay);
-                            })(i, sub);
-
-                            i = undefined;
-                        });
-                    },
-                    hide: function(i, opt) {
-                        opt = opt ? opt : $(this).closest('[data-rel="menu"]').data('menu');
-                        var _hide = arguments.callee;
-                        return $(this).removeClass(opt.hoverClass).each(function() {
-                            i = i ? i : methods._getIndex.call($(this), opt.items);
-                            var sub = $(this).data('show', false).find(opt.drops[+i + 1]),
-                                    timeout = sub.data('timeout');
-
-                            if (sub.data('firstActive'))
-                                return false;
-
-                            clearTimeout(timeout);
-                            (function(i, sub) {
-                                sub.removeClass(opt.openClass).stop()[opt.levels[i].effectOff](opt.levels[i].durationOff, function(e) {
-                                    var $this = $(this);
-                                    $this.css({'width': '', 'height': ''});
-                                    methods.sizeDrop.call($this.data('parent').filter(':visible'));
-                                    if (opt.levels[i].closeInsideLevel)
-                                        _hide.call($this.find('.' + opt.hoverClass).first());
-                                });
-                            })(i, sub);
-
-                            i = undefined;
-                        });
-                    },
-                    sizeDrop: function() {
-                        var width = 0,
-                                height = 0;
-
-                        this.reverse().each(function() {
-                            var $this = $(this),
-                                    data = $this.data();
-
-                            var w = $this.data('width');
-                            width += w ? w : data.width;
-                            $this.css('height', '');
-                            $this.css('width', width);
-                            if (data.relative && data.parent) {
-                                height = height > $this.actual('height') ? height : $this.actual('height');
-                                $this.css('height', height);
-                                arguments.callee.call(data.parent);
-                            }
-                            else
-                                return false;
-                        });
-                    },
-                    refresh: function(opt) {
-                        methods.init.call(this, $.extend({}, opt ? opt : this.data('menu'), {
-                            refresh: true
-                        }));
-                        return this;
-                    },
-                    _getIndex: function(obj) {
-                        for (var i in obj)
-                            if (this.is(obj[i]))
-                                return +i;
                     }
                 };
                 $.fn.menu = function(method) {
@@ -481,7 +478,7 @@
                 };
                 $.menu = new $.menuInit();
                 $(document).ready(function() {
-                    //$('[data-rel="menu"]').menu();//zzz
+                    $('[data-rel="menu"]').menu();
                 });
             })(jQuery);
             /*plugin menuImageCms end*/
@@ -504,7 +501,7 @@
                         effectOff: 'slideUp',
                         relative: false,
                         show: false
-                        //hide: false
+                                //hide: false
                     },
                     2: {
                         container: '.sub-2',
@@ -775,31 +772,29 @@
                                         <ul class="items sub-2">
                                             <li class="column_1">
                                                 <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
-                                                <div class="frame-l3 sub-3">
-                                                    <ul class="items sub-3">
-                                                        <li class="column_1">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
-                                                        </li><li class="column_1">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/smartfony1" title="Смартфоны">Смартфоны</a>
-                                                        </li><li class="column_1">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/chehly-dlia-telefonov" title="Чехлы для телефонов">Чехлы для телефонов</a>
-                                                        </li><li class="column_2">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/bluetooth-garnituryd" title="Bluetooth гарнитуры">Bluetooth гарнитуры</a>
-                                                        </li><li class="column_2">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/provodnye-garnitury" title="Проводные гарнитуры">Проводные гарнитуры</a>
-                                                        </li><li class="column_3">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/akkumuliatory" title="Аккумуляторы">Аккумуляторы</a>
-                                                        </li><li class="column_3">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
-                                                        </li><li class="column_4">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
-                                                        </li><li class="column_4">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
-                                                        </li><li class="column_4">
-                                                            <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
-                                                        </li>    
-                                                    </ul>
-                                                </div>
+                                                <ul class="items sub-3">
+                                                    <li class="column_1">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
+                                                    </li><li class="column_1">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/smartfony1" title="Смартфоны">Смартфоны</a>
+                                                    </li><li class="column_1">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/chehly-dlia-telefonov" title="Чехлы для телефонов">Чехлы для телефонов</a>
+                                                    </li><li class="column_2">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/bluetooth-garnituryd" title="Bluetooth гарнитуры">Bluetooth гарнитуры</a>
+                                                    </li><li class="column_2">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/provodnye-garnitury" title="Проводные гарнитуры">Проводные гарнитуры</a>
+                                                    </li><li class="column_3">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/akkumuliatory" title="Аккумуляторы">Аккумуляторы</a>
+                                                    </li><li class="column_3">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
+                                                    </li><li class="column_4">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
+                                                    </li><li class="column_4">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
+                                                    </li><li class="column_4">
+                                                        <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
+                                                    </li>    
+                                                </ul>
                                             </li>
                                             <li class="column_1">
                                                 <a href="http://menu/shop/category/telefoniia-pleery-gps/telefony/smartfony1" title="Смартфоны">Смартфоны</a>
