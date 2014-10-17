@@ -1,13 +1,13 @@
 /*plugin menuImageCms for main menu shop*/
-(function($) {
-    $.existsN = function(nabir) {
+(function ($) {
+    $.existsN = function (nabir) {
         return nabir.length > 0 && nabir instanceof jQuery;
     };
-    $.exists = function(selector) {
+    $.exists = function (selector) {
         return $(selector).length > 0 && $(selector) instanceof jQuery;
     };
     var isTouch = 'ontouchstart' in document.documentElement;
-    $.expr[':'].regex = function(elem, index, match) {
+    $.expr[':'].regex = function (elem, index, match) {
         var matchParams = match[3].split(','),
                 validLabels = /^(data|css):/,
                 attr = {
@@ -20,7 +20,7 @@
         return regex.test($(elem)[attr.method](attr.property));
     };
     var methods = {
-        _position: function(menuW, $thisL, dropW, drop, $thisW, sub2, direction) {
+        _position: function (menuW, $thisL, dropW, drop, $thisW, sub2, direction) {
             if ((menuW - $thisL < dropW && dropW < menuW && direction !== 'left') || direction === 'right') {
                 drop.removeClass('left-drop');
                 if (!sub2)
@@ -42,8 +42,8 @@
                     drop.css('left', $thisL).addClass('left-drop');
             }
         },
-        init: function(options) {
-            this.each(function() {
+        init: function (options) {
+            this.each(function () {
                 var menu = $(this);
                 if ($.existsN(menu)) {
                     var opt = $.extend({}, $.menu.dP, options, menu.data());
@@ -61,14 +61,14 @@
 
                     //rewrite
                     if (opt.menuCache && !opt.refresh) {
-                        menu.find('a').each(function() {//if start without cache and remove active item
+                        menu.find('a').each(function () {//if start without cache and remove active item
                             var $this = $(this);
                             $this.closest('li').removeClass(opt.active);
                             $this.removeClass(opt.active);
                         });
                         var locHref = location.origin + location.pathname,
                                 locationHref = opt.otherPage !== undefined ? opt.otherPage : locHref;
-                        menu.find('a[href="' + locationHref + '"]').each(function() {
+                        menu.find('a[href="' + locationHref + '"]').each(function () {
                             var $this = $(this);
                             $this.closest('li').addClass(opt.active);
                             $this.closest('li').addClass(opt.active).prev().addClass(opt.active);
@@ -76,19 +76,19 @@
                         });
                     }
                     //rewrite end
-                    
+
                     if (isTouch) {
                         evLF = 'toggle';
                         evLS = 'toggle';
                     }
-                    
+
                     if (!opt.refresh) {
                         if (opt.columnClassPref2) {
-                            dropOJ.find(opt.sub3Frame).each(function() {
+                            dropOJ.find(opt.sub3Frame).each(function () {
                                 var $this = $(this),
                                         columnsObj = $this.find(':regex(class,' + opt.columnClassPref2 + '([0-9]+))'),
                                         numbColumn = [];
-                                columnsObj.each(function(i) {
+                                columnsObj.each(function (i) {
                                     numbColumn[i] = $(this).attr('class').match(new RegExp(opt.columnClassPref2 + '([0-9]+)'))[0];
                                 });
                                 numbColumn = $.unique(numbColumn).sort();
@@ -98,7 +98,7 @@
                                         numbColumn.shift();
                                         numbColumn.push('0');
                                     }
-                                    $.map(numbColumn, function(n, i) {
+                                    $.map(numbColumn, function (n, i) {
                                         var currC = columnsObj.filter('.' + n),
                                                 classCuurC = currC.first().attr('class');
                                         $this.children().append('<li class="' + classCuurC + '" data-column="' + n + '"><ul></ul></li>');
@@ -115,11 +115,11 @@
                             });
                         }
                         if (opt.columnClassPref && !opt.sub2Frame)
-                            dropOJ.each(function() {
+                            dropOJ.each(function () {
                                 var $this = $(this),
                                         columnsObj = $this.find(':regex(class,' + opt.columnClassPref + '([0-9]|-1+))'),
                                         numbColumn = [];
-                                columnsObj.each(function(i) {
+                                columnsObj.each(function (i) {
                                     numbColumn[i] = $(this).attr('class').match(/([0-9]|-1+)/)[0];
                                 });
                                 numbColumn = $.unique(numbColumn).sort();
@@ -133,10 +133,10 @@
                                         numbColumn.shift();
                                         numbColumn.push('0');
                                     }
-                                    $.map(numbColumn, function(n, i) {
+                                    $.map(numbColumn, function (n, i) {
                                         var $thisLi = columnsObj.filter('.' + opt.columnClassPref + n),
                                                 sumx = 0;
-                                        $thisLi.each(function() {
+                                        $thisLi.each(function () {
                                             var datax = +$(this).attr('data-x');
                                             sumx = parseInt(datax === 0 || !datax ? 1 : datax) > sumx ? parseInt(datax === 0 || !datax ? 1 : datax) : sumx;
                                         });
@@ -146,7 +146,7 @@
                                     columnsObj.remove();
                                 }
                                 var sumx = 0;
-                                $this.children().children().each(function() {
+                                $this.children().children().each(function () {
                                     var datax = +$(this).attr('data-x');
                                     sumx = sumx + parseInt(datax === 0 || !datax ? 1 : datax);
                                 });
@@ -160,7 +160,7 @@
                         menuItem.add(menuItem.find('.helper:first')).css('height', '');
 
                     var sH = 0;
-                    menuItem.each(function(index) {
+                    menuItem.each(function (index) {
                         var $this = $(this),
                                 $thisW = $this.width(),
                                 $thisL = $this.position().left,
@@ -179,10 +179,10 @@
                     });
                     if (!opt.vertical)
                         menuItem.find('.helper:first').add(menuItem).css('height', sH);
-                    
+
                     menu.removeClass(opt.classRemove);
                     var hoverTO = '';
-                    
+
                     if (opt.evLF === 'toggle')
                         evLF = 'click';
                     else
@@ -192,9 +192,8 @@
                     else
                         evLF = 'mouseleave';
 
-menuItem
                     menuItem.off('click').off('mouseenter')[evLF](
-                            function(e) {
+                            function (e) {
                                 var $this = $(this);
                                 if (evLF === 'click')
                                     e.stopPropagation();
@@ -211,15 +210,15 @@ menuItem
                                     if ($(e.relatedTarget).is(menuItem) || $.existsN($(e.relatedTarget).parents(menuItem)))
                                         k[$thisI] = true;
                                     if (k[$thisI]) {
-                                        hoverTO = setTimeout(function() {
-                                            $thisDrop[opt.effectOn](opt.durationOn, function(e) {
+                                        hoverTO = setTimeout(function () {
+                                            $thisDrop[opt.effectOn](opt.durationOn, function (e) {
                                                 menu.trigger('showDrop.' + $.menu.nS, $thisDrop);
                                                 if ($thisDrop.length !== 0)
                                                     menu.addClass(opt.hover);
                                                 if (opt.sub2Frame) {
                                                     var listDrop = $thisDrop.children();
                                                     $thisDrop.find(opt.sub2Frame).addClass('is-side');
-                                                    listDrop.children().off('click').off('hover')[evLS](function(e) {
+                                                    listDrop.children().off('click').off('hover')[evLS](function (e) {
                                                         var $this = $(this);
                                                         if (evLS === 'click')
                                                             e.stopPropagation();
@@ -253,7 +252,7 @@ menuItem
                                                                     }, {
                                                                         queue: false,
                                                                         duration: opt.durationOnS,
-                                                                        complete: function() {
+                                                                        complete: function () {
                                                                             $thisDrop.animate({
                                                                                 'width': sumW,
                                                                                 'height': subHL2 + addH
@@ -271,7 +270,7 @@ menuItem
                                                                         'width': sumW
                                                                     });
                                                                 }
-                                                                subFrame[opt.effectOnS](opt.durationOnS, function() {
+                                                                subFrame[opt.effectOnS](opt.durationOnS, function () {
                                                                     subFrame.css('height', subHL2);
                                                                 });
                                                             }
@@ -316,21 +315,21 @@ menuItem
                                     $this.removeClass(opt.hover);
                                 }
                             });
-                    menu.off('mouseenter.' + $.menu.nS).off('mouseleave.' + $.menu.nS).on('mouseenter.' + $.menu.nS, function(e) {
+                    menu.off('mouseenter.' + $.menu.nS).off('mouseleave.' + $.menu.nS).on('mouseenter.' + $.menu.nS, function (e) {
                         timeDurM = 0;
-                    }).on('mouseleave.' + $.menu.nS, function(e) {
+                    }).on('mouseleave.' + $.menu.nS, function (e) {
                         timeDurM = opt.duration;
                     });
-                    $('body').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function(e) {
-                        
-                    }).off('keydown.' + $.menu.nS).on('keydown.' + $.menu.nS, function(e) {
+                    $('body').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function (e) {
+
+                    }).off('keydown.' + $.menu.nS).on('keydown.' + $.menu.nS, function (e) {
                         if (!e)
                             var e = window.event;
                         if (e.keyCode === 27) {
-                            
+
                         }
                     });
-                    dropOJ.find('a').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function(e) {
+                    dropOJ.find('a').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function (e) {
                         if (evLS === 'click') {
                             if ($.existsN($(this).next()) && opt.sub2Frame) {
                                 e.preventDefault();
@@ -342,7 +341,7 @@ menuItem
                         else
                             e.stopPropagation();
                     });
-                    menuItem.find('a:first').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function(e) {
+                    menuItem.find('a:first').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function (e) {
                         if (!$.existsN($(this).closest(opt.item).find(opt.drop)))
                             e.stopPropagation();
                         if (evLF === 'click' && $.existsN($(this).closest(opt.item).find(opt.drop)))
@@ -353,14 +352,12 @@ menuItem
             );
             return this;
         },
-        refresh: function(optionsMenu) {
-            methods.init.call(this, $.extend({}, optionsMenu ? optionsMenu : this.data('options'), {
-                refresh: true
-            }));
+        refresh: function (optionsMenu) {
+            methods.init.call(this, $.extend({}, optionsMenu ? optionsMenu : this.data('options'), {refresh: true}));
             return this;
         }
     };
-    $.fn.menu = function(method) {
+    $.fn.menu = function (method) {
         if (methods[method]) {
             return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof method === 'object' || !method) {
@@ -369,13 +366,13 @@ menuItem
             $.error('Method ' + method + ' does not exist on $.menuImageCms');
         }
     };
-    $.menuInit = function() {
+    $.menuInit = function () {
         this.nS = 'menu';
-        this.method = function(m) {
+        this.method = function (m) {
             if (!/_/.test(m))
                 return methods[m];
         };
-        this.methods = function() {
+        this.methods = function () {
             var newM = {};
             for (var i in methods) {
                 if (!/_/.test(i))
@@ -412,12 +409,12 @@ menuItem
             vertical: false,
             witdthColumn: 200
         };
-        this.setParameters = function(options) {
+        this.setParameters = function (options) {
             $.extend(this.dP, options);
         };
     };
     $.menu = new $.menuInit();
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('[data-rel="menu"]').menu();
     });
 })(jQuery);
