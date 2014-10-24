@@ -61,7 +61,7 @@
                 $.exists = function (selector) {
                     return $(selector).length > 0 && $(selector) instanceof jQuery;
                 };
-                var isTouch = 'ontouchstart' in document.documentElement;
+                var isTouch = document.createTouch !== undefined;
                 var methods = {
                     destroy: function () {
                         return this.each(function () {
@@ -504,9 +504,10 @@
                             triggerOn: 'mouseenter',
                             triggerOff: 'mouseleave',
                             relative: false,
-                            animate: true, //animatesub3: true,
-                            direction: null, //when menu place left and drops go to right (if vertical menu)
+                            animate: true,
+                            direction: null,
                             show: false,
+                            hide: true,
                             closeIdenticLevel: true,
                             closeInsideLevel: false
                         },
@@ -608,14 +609,14 @@
                         //otherPage: hrefCategoryProduct, //for product [undefined or value not other]
             };
             $(document).ready(function () {
-                $('.menu2').menu(optionsMenu);
+                //$('.menu2').menu(optionsMenu);
             });
         </script>
         <h3>Simple Menu</h3>
         <div class="frame-menu horizontal-menu">
             <!--    menu-row-category || menu-col-category-->
             <div class="container">
-                <div class="menu2 not-js menu-col-category">
+                <div class="menu2 not-js menu-col-category" data-rel="menu">
                     <nav>
                         <ul>
                             <li>
