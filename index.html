@@ -64,7 +64,6 @@
                 var isTouch = document.createTouch !== undefined;
                 var methods = {
                     destroy: function () {
-                        console.log(this)
                         return this.each(function () {
                             var menu = $(this);
                             if (!$.existsN(menu) || !menu.data('menu'))
@@ -96,7 +95,7 @@
                         });
                     },
                     init: function (options) {
-                        return this.menu('destroy').each(function () {
+                        return methods.destroy.call(this).each(function () {
                             var menu = $(this);
                             if (!$.existsN(menu))
                                 return false;
@@ -171,7 +170,8 @@
                                                         $this = $('<' + opt.levels[i].itemColumn + ' data-column="' + n + '" style="display: inline-block;vertical-align: top;font-size: ' + fS + ';width: ' + opt.levels[i].widthColumn + 'px;"><' + opt.levels[i].wrapperColumn + ' style="display: block;"></' + opt.levels[i].wrapperColumn + '></' + opt.levels[i].itemColumn + '>').appendTo(drop);
 
                                                 $this.children().append(currC.clone(true));
-                                                drop.css({'width': numbColumnL * opt.levels[i].widthColumn, 'font-size': 0}).data('width', numbColumnL * opt.levels[i].widthColumn);
+                                                var w = opt.levels[i].relative ? numbColumnL * opt.levels[i].widthColumn : '';
+                                                drop.css({'width': w, 'font-size': 0}).data('width', w);
                                             });
                                             columnsObj.remove();
                                         }
@@ -549,7 +549,7 @@
                         effectOn: 'fadeIn',
                         effectOff: 'slideUp',
                         relative: false,
-                        position: 'relative',
+                        //position: 'relative',
                         show: false
                                 //hide: false
                     },
@@ -567,7 +567,7 @@
                     3: {
                         container: '.sub-3',
                         columnClassPref: 'column_',
-                        relative: true
+                        //relative: true
                     },
                     4: {
                         container: '.sub-4',
