@@ -48,7 +48,7 @@
                             clone.css({
                                 position: 'absolute',
                                 top: '-9999px'
-                            }).show().appendTo($('body')).find('*:not([style*="display:none"])').show();
+                            }).show().appendTo($('body'));
                         var dimS = clone[dim]();
                         clone.remove();
                         return dimS;
@@ -118,11 +118,6 @@
                                         $(this).data('sub', sub);
                                 });
 
-                            //console.log(opt.levels)
-                            //console.log(opt.drops)
-                            //console.log(opt.items)
-                            //console.log(opt.anchors)
-
                             methods._outerDefinePosition.call(menu, opt);
 
                             menu.find('a').off('click.' + $.menu.nS).on('click.' + $.menu.nS, function (e) {
@@ -132,6 +127,7 @@
                                     e.stopPropagation();
                             });
 
+                            // define columns
                             if (!opt.refresh) {
                                 for (var i = opt.countLevels - 1; i >= 0; i--) {
                                     if (!opt.levels[i].columnClassPref)
@@ -183,7 +179,7 @@
                             methods._outerDefinePosition.call(menu, opt, true);
 
                             //show subs which have option show: true
-                            for (var i in opt.levels)
+                            for (var i in opt.levels) {
                                 if (opt.levels[i].show) {
                                     opt.drops[i].show();
                                     opt.items[i].each(function () {
@@ -192,6 +188,12 @@
                                             methods.sizeDrop.call(sub);
                                     });
                                 }
+                                if (opt.drops[i]) //for correct job plugin actual
+                                    opt.drops[i].each(function () {
+                                        if (!$(this).is(':visible'))
+                                            $(this).hide();
+                                    });
+                            }
 
                             //add for items activeClass
                             if (opt.menuCache && !opt.refresh) {
@@ -211,6 +213,7 @@
                                 });
                             }
 
+                            // set handler to opne and close
                             for (var i in opt.items)
                                 (function (i) {
                                     if (opt.levels[i].triggerOn) {
@@ -219,16 +222,16 @@
                                         opt.items[i].off(opt.levels[i].triggerOn + '.' + $.menu.nS).on(opt.levels[i].triggerOn + '.' + $.menu.nS, function (e) {
                                             e.stopPropagation();
                                             if (opt.levels[i].closeIdenticLevel)
-                                                methods.hide.call($(this).siblings('.' + opt.hoverClass), i, opt);
+                                                methods.hide.call($(this).siblings('.' + opt.hoverClass), i, opt, e);
                                             if (!$(this).data('show'))
-                                                methods.show.call($(this), i, opt);
+                                                methods.show.call($(this), i, opt, e);
                                             else
-                                                methods.hide.call($(this), i, opt);
+                                                methods.hide.call($(this), i, opt, e);
                                         });
                                     }
                                     if (opt.levels[+i + 1] && opt.levels[+i + 1].hide && opt.levels[i].triggerOff)
                                         opt.items[i].off(opt.levels[i].triggerOff + '.' + $.menu.nS).on(opt.levels[i].triggerOff + '.' + $.menu.nS, function (e) {
-                                            methods.hide.call($(this), i, opt);
+                                            methods.hide.call($(this), i, opt, e);
                                         });
                                 })(i);
 
@@ -236,9 +239,10 @@
                             if (opt.showActive)
                                 methods.show.call(itemsActive.data('firstActive', true), null, opt);
 
-                        });
+                        }
+                        );
                     },
-                    show: function (j, opt) {
+                    show: function (j, opt, e) {
                         opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
                         return $(this).addClass(opt.hoverClass).each(function () {
                             var i = j ? j : methods._getIndex.call($(this), opt.items);
@@ -263,7 +267,7 @@
                             i = undefined;
                         });
                     },
-                    hide: function (i, opt) {
+                    hide: function (i, opt, e) {
                         opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
                         var _hide = arguments.callee;
                         return $(this).removeClass(opt.hoverClass).each(function () {
@@ -567,7 +571,7 @@
                     3: {
                         container: '.sub-3',
                         columnClassPref: 'column_',
-                        //relative: true
+                        relative: true
                     },
                     4: {
                         container: '.sub-4',
@@ -640,79 +644,79 @@
                                                 <ul class="items sub-3">
                                                     <li class="column_1 active">
                                                         <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
-                                                        <!--                                                        <ul class="items sub-4">
-                                                                                                                    <li class="column_1 active">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
-                                                                                                                        <ul class="items sub-5">
-                                                                                                                            <li class="column_1 active">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefonyasdf" title="Мобильные телефоны">Мобильные телефоны</a>
-                                                                                                                            </li><li class="column_1">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony" title="Смартфоны">Смартфоны</a>
-                                                                                                                            </li><li class="column_1">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/chehly-dlia-telefonov" title="Чехлы для телефонов">Чехлы для телефонов</a>
-                                                                                                                            </li><li class="column_2">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/bluetooth-garnituryd" title="Bluetooth гарнитуры">Bluetooth гарнитуры</a>
-                                                                                                                            </li><li class="column_2">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/provodnye-garnitury" title="Проводные гарнитуры">Проводные гарнитуры</a>
-                                                                                                                            </li><li class="column_3">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/akkumuliatory" title="Аккумуляторы">Аккумуляторы</a>
-                                                                                                                            </li><li class="column_3">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
-                                                                                                                            </li><li class="column_4">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
-                                                                                                                            </li><li class="column_4">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
-                                                                                                                            </li><li class="column_4">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
-                                                                                                                            </li>
-                                                                                                                            <li class="column_3">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
-                                                                                                                            </li>
-                                                                                                                            <li class="column_4">
-                                                                                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
-                                                                                                                            </li>
-                                                                                                                        </ul>
-                                                                                                                    </li><li class="column_1">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony" title="Смартфоны">Смартфоны</a>
-                                                                                                                    </li><li class="column_1">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/chehly-dlia-telefonov" title="Чехлы для телефонов">Чехлы для телефонов</a>
-                                                                                                                    </li><li class="column_2">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/bluetooth-garnituryd" title="Bluetooth гарнитуры">Bluetooth гарнитуры</a>
-                                                                                                                    </li><li class="column_2">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/provodnye-garnitury" title="Проводные гарнитуры">Проводные гарнитуры</a>
-                                                                                                                    </li><li class="column_3">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/akkumuliatory" title="Аккумуляторы">Аккумуляторы</a>
-                                                                                                                    </li><li class="column_3">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
-                                                                                                                    </li><li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
-                                                                                                                    </li><li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
-                                                                                                                    </li><li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_3">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
-                                                                                                                    </li>
-                                                                                                                    <li class="column_4">
-                                                                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
-                                                                                                                    </li>
-                                                                                                                </ul>-->
+                                                        <ul class="items sub-4">
+                                                            <li class="column_1 active">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
+                                                                <ul class="items sub-5">
+                                                                    <li class="column_1 active">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefonyasdf" title="Мобильные телефоны">Мобильные телефоны</a>
+                                                                    </li><li class="column_1">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony" title="Смартфоны">Смартфоны</a>
+                                                                    </li><li class="column_1">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/chehly-dlia-telefonov" title="Чехлы для телефонов">Чехлы для телефонов</a>
+                                                                    </li><li class="column_2">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/bluetooth-garnituryd" title="Bluetooth гарнитуры">Bluetooth гарнитуры</a>
+                                                                    </li><li class="column_2">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/provodnye-garnitury" title="Проводные гарнитуры">Проводные гарнитуры</a>
+                                                                    </li><li class="column_3">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/akkumuliatory" title="Аккумуляторы">Аккумуляторы</a>
+                                                                    </li><li class="column_3">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
+                                                                    </li><li class="column_4">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
+                                                                    </li><li class="column_4">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
+                                                                    </li><li class="column_4">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
+                                                                    </li>
+                                                                    <li class="column_3">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
+                                                                    </li>
+                                                                    <li class="column_4">
+                                                                        <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </li><li class="column_1">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony" title="Смартфоны">Смартфоны</a>
+                                                            </li><li class="column_1">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/chehly-dlia-telefonov" title="Чехлы для телефонов">Чехлы для телефонов</a>
+                                                            </li><li class="column_2">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/bluetooth-garnituryd" title="Bluetooth гарнитуры">Bluetooth гарнитуры</a>
+                                                            </li><li class="column_2">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/provodnye-garnitury" title="Проводные гарнитуры">Проводные гарнитуры</a>
+                                                            </li><li class="column_3">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/akkumuliatory" title="Аккумуляторы">Аккумуляторы</a>
+                                                            </li><li class="column_3">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
+                                                            </li><li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
+                                                            </li><li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
+                                                            </li><li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
+                                                            </li>
+                                                            <li class="column_3">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zariadnye-ustroistva" title="Зарядные устройства">Зарядные устройства</a>
+                                                            </li>
+                                                            <li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
+                                                            </li>
+                                                            <li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
+                                                            </li>
+                                                            <li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
+                                                            </li>
+                                                            <li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/karty-pamiati" title="Карты памяти">Карты памяти</a>
+                                                            </li>
+                                                            <li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/zashchitnye-plenki" title="Защитные пленки">Защитные пленки</a>
+                                                            </li>
+                                                            <li class="column_4">
+                                                                <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/aksessuary-dlia-telefonov" title="Аксессуары для телефонов">Аксессуары для телефонов</a>
+                                                            </li>
+                                                        </ul>
                                                     </li><li class="column_1">
                                                         <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony1" title="Смартфоны">Смартфоны</a>
                                                     </li><li class="column_1">
