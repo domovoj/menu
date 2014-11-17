@@ -162,20 +162,19 @@
 
                                             $.map(numbColumn, function (n, j) {
                                                 var currC = columnsObj.filter('.' + opt.levels[i].columnClassPref + n),
-                                                        fS = menu.css('font-size'),
-                                                        $this = $('<' + opt.levels[i].itemColumn + ' data-column="' + n + '" style="display: inline-block;vertical-align: top;font-size: ' + fS + ';width: ' + opt.levels[i].widthColumn + 'px;"><' + opt.levels[i].wrapperColumn + ' style="display: block;"></' + opt.levels[i].wrapperColumn + '></' + opt.levels[i].itemColumn + '>').appendTo(drop);
+                                                        $this = $('<' + opt.levels[i].itemColumn + ' data-column="' + n + '" style="width: ' + opt.levels[i].widthColumn + 'px;"><' + opt.levels[i].wrapperColumn + ' style="display: block;"></' + opt.levels[i].wrapperColumn + '></' + opt.levels[i].itemColumn + '>').appendTo(drop.css('float', 'left'));
 
                                                 $this.children().append(currC.clone(true));
                                                 var w = opt.levels[i].relative ? numbColumnL * opt.levels[i].widthColumn : '';
-                                                drop.css({'width': w, 'font-size': 0}).data('width', w);
+                                                drop.css({'width': w}).data('width', w);
                                             });
                                             columnsObj.remove();
                                         }
                                     });
                                 }
                             }
-                            methods._getElements.call(menu, opt);
 
+                            methods._getElements.call(menu, opt);
                             methods._outerDefinePosition.call(menu, opt, true);
 
                             //show subs which have option show: true
@@ -202,7 +201,7 @@
                                 var locHref = location.origin + location.pathname,
                                         locationHref = opt.otherPage !== undefined ? opt.otherPage : locHref;
                                 var itemsActive = $([]);
-                                menu.find('a[href="' + locationHref + '"]').each(function () {
+                                menu.find('a[href*="' + locationHref + '"]').each(function () {
                                     var $this = $(this);
                                     for (var i in opt.anchors)
                                         if ($.existsN(opt.anchors[i].filter($this)))
@@ -213,7 +212,7 @@
                                 });
                             }
 
-                            // set handler to opne and close
+                            // set handler for opening and closing
                             for (var i in opt.items)
                                 (function (i) {
                                     if (opt.levels[i].triggerOn) {
@@ -238,9 +237,7 @@
                             //show subs which have active link
                             if (opt.showActive)
                                 methods.show.call(itemsActive.data('firstActive', true), null, opt);
-
-                        }
-                        );
+                        });
                     },
                     show: function (j, opt, e) {
                         opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
@@ -305,18 +302,13 @@
                                 'width': ''
                             });
                             if (data.relative && data.parent) {
-                                height = height > $this.actual('height') ? height : $this.actual('height');
-                                width += data.width;
+                                var h = $this.actual('height');
+                                height = height > h ? height : h;
+                                width = width === data.width ? data.width + data.marginSide : (width > data.width ? width + data.marginSide : data.width);
                                 $this.css({
                                     'height': height,
                                     'width': width
                                 });
-
-                                width += data.parent.data('marginSide') ? -data.width + data.marginSide : 0;
-                                
-                                console.log(data.parent.data('marginSide'))
-                                console.log($this)
-                                //width += width < data.parent.data('width') ? -data.marginSide : 0   ;
 
                                 arguments.callee.call(data.parent);
                             }
@@ -389,19 +381,17 @@
                     _positionSub: function (pos, opt) {
                         for (var i in opt.drops) {
                             var children = this.children();
-                            if ($.exists('.item-level' + i))
-                                children = this.find('.item-level' + i);
 
-                            this.css('text-align', '');
-                            children.css({'float': '', 'clear': ''});
+                            this.find('[data-column]').css('float', pos);
+                            if (pos === 'left')
+                                if ($.exists('.item-level' + i))
+                                    children = this.find('.item-level' + i);
+
                             if (opt.levels[i].position)
                                 children.css('position', opt.levels[i].position);
-                            if (pos === 'right') {
-                                this.css('text-align', 'right');
-                                children.css({'float': 'right', 'clear': 'right', 'text-align': 'left'});
-                            }
-                            this.find(opt.drops[i]).css({'left': 'auto', 'right': 'auto', 'top': 0, 'text-align': ''}).each(function () {
-                                var $this = $(this).css('text-align', ''),
+
+                            this.find(opt.drops[i]).css({'left': 'auto', 'right': 'auto', 'top': 0}).each(function () {
+                                var $this = $(this),
                                         w = $this.data('parent').data('widthF'),
                                         children = $this.children();
 
@@ -412,10 +402,6 @@
                                     $this.css(pos, w).data('marginSide', w);
                                 if (opt.levels[i].position)
                                     children.css('position', opt.levels[i].position);
-                                if (pos === 'right') {
-                                    $this.css('text-align', 'right');
-                                    children.css({'float': 'right', 'clear': 'right', 'text-align': 'left'});
-                                }
                             });
                         }
                     },
@@ -428,7 +414,7 @@
                         drop.removeClass('left-drop right-drop').css({'left': 'auto', 'right': 'auto', 'position': 'absolute'});
 
                         var l = menuW - ($thisL - menuL);
-                        if (l < dropsW && l > $thisL - menuL + $thisW || direction === 'left') {
+                        if ((l < dropsW && l > $thisL - menuL + $thisW || direction === 'left') && direction !== 'right') {
                             var left = $thisL - menuL;
                             drop.css('left', left).addClass('left-drop');
                             methods._positionSub.call(drop, 'left', menu.data('menu'));
@@ -513,7 +499,7 @@
                             triggerOn: 'mouseenter',
                             triggerOff: 'mouseleave',
                             relative: false,
-                            animate: true,
+                            position: null,
                             direction: null,
                             show: false,
                             hide: true,
@@ -555,7 +541,7 @@
                         durationOff: 100,
                         effectOn: 'fadeIn',
                         effectOff: 'slideUp',
-                        relative: false,
+                        relative: true,
                         //position: 'relative',
                         show: false
                                 //hide: false
@@ -602,7 +588,6 @@
                     relative: false,
                     show: false,
                     hide: true,
-                    animate: true, //animatesub3: true,
                     itemColumn: 'li',
                     wrapperColumn: 'ul',
                     position: null,
