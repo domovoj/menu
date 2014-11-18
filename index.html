@@ -494,6 +494,8 @@
                             effectOn: 'slideDown',
                             effectOff: 'slideUp',
                             columnClassPref: null,
+                            itemColumn: 'li',
+                            wrapperColumn: 'ul',
                             widthColumn: 200,
                             maxCountColumn: 5,
                             triggerOn: 'mouseenter',
@@ -511,8 +513,7 @@
                         activeClass: 'active',
                         openClass: 'open',
                         refresh: false,
-                        showActive: false,
-                        hideActive: false
+                        showActive: false
                     };
                     this.setParameters = function (opt) {
                         $.extend(this.dP, opt);
@@ -598,7 +599,6 @@
                 activeClass: 'active', //active class
 
                 showActive: true,
-                hideActive: false,
                 menuCache: true
                         //otherPage: hrefCategoryProduct, //for product [undefined or value not other]
             };
