@@ -166,7 +166,7 @@
 
                                                 $this.children().append(currC.clone(true));
                                                 var w = opt.levels[i].relative ? numbColumnL * opt.levels[i].widthColumn : '';
-                                                drop.css({'width': w}).data('width', w);
+                                                drop.css({width: w}).data('width', w);
                                             });
                                             columnsObj.remove();
                                         }
@@ -252,11 +252,9 @@
                                 clearTimeout(sub.data('timeout'));
                             (function (i, sub) {
                                 sub.data().timeout = setTimeout($.proxy(function () {
-                                    this.addClass(opt.openClass)[opt.levels[i].effectOn](!j ? 0 : opt.levels[i].durationOn, function (e) {
-                                        var $this = $(this);
-                                        $this.css('overflow', '');
-                                        methods.sizeDrop.call($this);
-                                        methods.sizeDrop.call($this.find('.' + opt.openClass + ':visible').last());
+                                    this.css('width', $(this).data('width')).addClass(opt.openClass)[opt.levels[i].effectOn](!j ? 0 : opt.levels[i].durationOn, function () {
+                                        methods.sizeDrop.call($(this).css('overflow', ''));
+                                        methods.sizeDrop.call($(this).find('.' + opt.openClass + ':visible').last());
                                     });
                                 }, sub), !j ? 0 : opt.levels[i].delay);
                             })(i, sub);
@@ -277,9 +275,11 @@
 
                             clearTimeout(timeout);
                             (function (i, sub) {
-                                sub.removeClass(opt.openClass).stop()[opt.levels[i].effectOff](opt.levels[i].durationOff, function (e) {
-                                    var $this = $(this);
-                                    $this.css('height', '');
+                                sub.removeClass(opt.openClass).stop()[opt.levels[i].effectOff](opt.levels[i].durationOff, function () {
+                                    var $this = $(this).css({
+                                        height: '',
+                                        width: ''
+                                    });
                                     methods.sizeDrop.call($this.data('parent').filter(':visible'));
                                     if (opt.levels[i].closeInsideLevel)
                                         _hide.call($this.find('.' + opt.hoverClass).first());
@@ -298,16 +298,16 @@
                                     data = $this.data();
 
                             $this.css({
-                                'height': '',
-                                'width': ''
+                                height: '',
+                                width: ''
                             });
                             if (data.relative && data.parent) {
                                 var h = $this.actual('height');
                                 height = height > h ? height : h;
                                 width = width === data.width ? data.width + data.marginSide : (width > data.width ? width + data.marginSide : data.width);
                                 $this.css({
-                                    'height': height,
-                                    'width': width
+                                    height: height,
+                                    width: width
                                 });
 
                                 arguments.callee.call(data.parent);
@@ -447,7 +447,7 @@
                                         var $this = $(this),
                                                 w = $this.width();
 
-                                        $this.data({'widthF': w, 'width': w});
+                                        $this.data({'widthF': w, width: w});
                                     });
 
                                 drop.show();
