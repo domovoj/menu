@@ -26,7 +26,7 @@
 
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script>
-            /*plugin menuImageCms for main menu shop*/
+            /*plugin menu for main menu shop*/
             (function ($) {
                 Array.prototype.sortUnique = function () {
                     var arr = this.sort(function (a, b) {
@@ -37,10 +37,8 @@
                         if (arr[i - 1] !== arr[i])
                             ret.push(arr[i]);
                     return ret;
-                }
-                $.fn.reverse = [].reverse;
-                /*plugin actual*/
-                $.fn.actual = function () {
+                };
+                var actual = function () {
                     if (arguments.length && typeof arguments[0] === 'string') {
                         var dim = arguments[0],
                                 clone = this.clone();
@@ -55,10 +53,10 @@
                     }
                     return undefined;
                 };
-                $.existsN = function (nabir) {
+                var existsN = function (nabir) {
                     return nabir.length > 0 && nabir instanceof jQuery;
                 };
-                $.exists = function (selector) {
+                var exists = function (selector) {
                     return $(selector).length > 0 && $(selector) instanceof jQuery;
                 };
                 var isTouch = document.createTouch !== undefined;
@@ -66,7 +64,7 @@
                     destroy: function () {
                         return this.each(function () {
                             var menu = $(this);
-                            if (!$.existsN(menu) || !menu.data('menu'))
+                            if (!existsN(menu) || !menu.data('menu'))
                                 return false;
 
                             var opt = menu.data('menu');
@@ -97,7 +95,7 @@
                     init: function (options) {
                         return methods.destroy.call(this).each(function () {
                             var menu = $(this);
-                            if (!$.existsN(menu))
+                            if (!existsN(menu))
                                 return false;
 
                             var opt = $.extend({}, $.menu.dP, options, menu.data());
@@ -114,7 +112,7 @@
                             for (var i in opt.anchors)
                                 opt.anchors[i].each(function () {
                                     var sub = $(this).closest(opt.items[i]).find(opt.drops[+i + 1]);
-                                    if ($.existsN(sub))
+                                    if (existsN(sub))
                                         $(this).data('sub', sub);
                                 });
 
@@ -128,7 +126,7 @@
                             });
 
                             // define columns
-                            if (!opt.refresh) {
+                            if (!opt.refresh)
                                 for (var i = opt.countLevels - 1; i >= 0; i--) {
                                     if (!opt.levels[i].columnClassPref)
                                         continue;
@@ -136,7 +134,7 @@
                                         var drop = $(this),
                                                 columnsObj = drop.find(opt.items[i].filter('[class*=' + opt.levels[i].columnClassPref + ']'));
 
-                                        if (!$.existsN(columnsObj))
+                                        if (!existsN(columnsObj))
                                             return false;
 
                                         var numbColumn = [];
@@ -172,7 +170,6 @@
                                         }
                                     });
                                 }
-                            }
 
                             methods._getElements.call(menu, opt);
                             methods._outerDefinePosition.call(menu, opt, true);
@@ -183,7 +180,7 @@
                                     opt.drops[i].show();
                                     opt.items[i].each(function () {
                                         var sub = $(this).find(opt.drops[+i + 1]);
-                                        if ($.existsN(sub))
+                                        if (existsN(sub))
                                             methods.sizeDrop.call(sub);
                                     });
                                 }
@@ -195,16 +192,16 @@
                             }
 
                             //add for items activeClass
-                            if (opt.menuCache && !opt.refresh) {
+                            if (!opt.refresh) {
                                 for (var i in opt.anchors)
                                     $(opt.anchors[i].removeClass(opt.activeClass).closest(opt.items[i])).removeClass(opt.activeClass);
-                                var locHref = location.origin + location.pathname,
-                                        locationHref = opt.otherPage !== undefined ? opt.otherPage : locHref;
-                                var itemsActive = $([]);
-                                menu.find('a[href*="' + locationHref + '"]').each(function () {
+
+                                var locHref = opt.otherPage !== undefined ? opt.otherPage : location.origin + location.pathname,
+                                        itemsActive = $([]);
+                                menu.find('a[href="' + locHref + '"]').each(function () {
                                     var $this = $(this);
                                     for (var i in opt.anchors)
-                                        if ($.existsN(opt.anchors[i].filter($this)))
+                                        if (existsN(opt.anchors[i].filter($this)))
                                             for (var j = i + 1; j >= 0; j--) {
                                                 $this.closest(opt.items[j]).addClass(opt.activeClass);
                                                 itemsActive = itemsActive.add($this.closest(opt.items[j]));
@@ -235,7 +232,7 @@
                                 })(i);
 
                             //show subs which have active link
-                            if (opt.showActive)
+                            if (opt.showActive && itemsActive)
                                 methods.show.call(itemsActive.data('firstActive', true), null, opt);
                         });
                     },
@@ -245,7 +242,7 @@
                             var i = j ? j : methods._getIndex.call($(this), opt.items);
                             var sub = $(this).data('show', true).find(opt.drops[+i + 1]);
 
-                            if (!$.existsN(sub))
+                            if (!existsN(sub))
                                 return false;
 
                             if (sub.data('timeout'))
@@ -293,7 +290,7 @@
                         var width = 0,
                                 height = 0;
 
-                        this.reverse().each(function () {
+                        [].reverse.call(this).each(function () {
                             var $this = $(this),
                                     data = $this.data();
 
@@ -302,7 +299,7 @@
                                 width: ''
                             });
                             if (data.relative && data.parent) {
-                                var h = $this.actual('height');
+                                var h = actual.call($this, 'height');
                                 height = height > h ? height : h;
                                 width = width === data.width ? data.width + data.marginSide : (width > data.width ? width + data.marginSide : data.width);
                                 $this.css({
@@ -334,14 +331,14 @@
                         (function () {
                             var level = 0;
                             return function (container) {
-                                if ($.existsN(container)) {
+                                if (existsN(container)) {
                                     if (opt.items[level - 1])
                                         container = opt.items[level - 1];
 
                                     opt.levels[level] = $.extend({}, $.menu.dP.defaultLevel, opt.defaultLevel, opt.levels[level]);
                                     opt.drops[level] = container.find(opt.levels[level].container + ':first');
 
-                                    if (opt.drops[level] && $.existsN(opt.drops[level])) {
+                                    if (opt.drops[level] && existsN(opt.drops[level])) {
                                         if (opt.drops[level - 1])
                                             opt.drops[level].each(function () {
                                                 $(this).data({
@@ -358,7 +355,7 @@
                                                 'z-index': level
                                             });
 
-                                        if (!$.exists('.item-level' + level))
+                                        if (!exists('.item-level' + level))
                                             opt.items[level] = opt.drops[level].children().addClass('item-level' + level).css('position', 'static');
                                         else //for second call after render menu columns
                                             opt.items[level] = opt.drops[level].find('.item-level' + level).css('position', 'static');
@@ -384,7 +381,7 @@
 
                             this.find('[data-column]').css('float', pos);
                             if (pos === 'left')
-                                if ($.exists('.item-level' + i))
+                                if (exists('.item-level' + i))
                                     children = this.find('.item-level' + i);
 
                             if (opt.levels[i].position)
@@ -395,7 +392,7 @@
                                         w = $this.data('parent').data('widthF'),
                                         children = $this.children();
 
-                                if ($.exists('.item-level' + i))
+                                if (exists('.item-level' + i))
                                     children = $this.find('.item-level' + i);
 
                                 if ($this.data('relative'))
@@ -433,7 +430,7 @@
                                     dropss = drop,
                                     sub0 = drop;
 
-                            if ($.existsN(drop)) {
+                            if (existsN(drop)) {
                                 _self.css('overflow', 'hidden');
 
                                 for (var i = 2; i < opt.countLevels; i++)
@@ -468,10 +465,10 @@
                     } else if (typeof method === 'object' || !method) {
                         return methods.init.apply(this, arguments);
                     } else {
-                        $.error('Method ' + method + ' does not exist on $.menuImageCms');
+                        $.error('Method ' + method + ' does not exist on $.menu');
                     }
                 };
-                $.menuInit = function () {
+                function menuInit() {
                     this.nS = 'menu';
                     this.method = function (m) {
                         if (!/_/.test(m))
@@ -508,7 +505,6 @@
                             closeIdenticLevel: true,
                             closeInsideLevel: false
                         },
-                        menuCache: false,
                         hoverClass: 'hover',
                         activeClass: 'active',
                         openClass: 'open',
@@ -518,13 +514,14 @@
                     this.setParameters = function (opt) {
                         $.extend(this.dP, opt);
                     };
-                };
-                $.menu = new $.menuInit();
+                }
+                ;
+                $.menu = new menuInit;
                 $(document).ready(function () {
                     $('[data-rel="menu"]').menu();
                 });
             })(jQuery);
-            /*plugin menuImageCms end*/
+            /*plugin menu end*/
         </script>
     </head>
     <body>
@@ -598,12 +595,11 @@
                 hoverClass: 'hover', //active class
                 activeClass: 'active', //active class
 
-                showActive: true,
-                menuCache: true
+                showActive: true
                         //otherPage: hrefCategoryProduct, //for product [undefined or value not other]
             };
             $(document).ready(function () {
-                $('.menu2').menu(optionsMenu);
+//                $('.menu2').menu(optionsMenu);
             });
         </script>
         <h3>Simple Menu</h3>
@@ -636,7 +632,7 @@
                                                             <li class="column_1 active">
                                                                 <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные телефоны</a>
                                                                 <ul class="items sub-5">
-                                                                    <li class="column_1 active">
+                                                                    <li class="column_1">
                                                                         <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefonyasdf" title="Мобильные телефоны">Мобильные телефоны</a>
                                                                     </li><li class="column_1">
                                                                         <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony" title="Смартфоны">Смартфоны</a>
@@ -738,7 +734,7 @@
                                             <li class="column_2">
                                                 <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony1" title="Смартфоны">Смартфоны</a>
                                                 <ul class="items sub-3">
-                                                    <li class="column_1 active">
+                                                    <li class="column_1">
                                                         <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/mobilnye-telefony" title="Мобильные телефоны">Мобильные2 телефоны</a>
                                                     </li><li class="column_1">
                                                         <a href="http://menu:8080/shop/category/telefoniia-pleery-gps/telefony/smartfony1" title="Смартфоны">Смартфоны</a>
