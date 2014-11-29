@@ -1,2 +1,2 @@
 RewriteEngine on 
-RewriteRule ^(.*)$ index.html?route=$1 [L,QSA]
+RewriteRule ^.+?[^css|js]$ index.html [L,QSA]
