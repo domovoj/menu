@@ -14,7 +14,6 @@
             ul{list-style: none;}
 
             .menu > ul > li{float: left;}
-
         </style>
 
         <script>
@@ -69,7 +68,6 @@
                     }
                 },
                 defaultLevel: {
-                    container: 'ul',
                     delay: 200,
                     durationOn: 200,
                     durationOff: 100,
@@ -77,8 +75,6 @@
                     effectOff: 'slideUp',
                     widthColumn: 150,
                     maxCountColumn: 20000,
-                    triggerOn: 'click',
-                    triggerOff: '',
                     relative: false,
                     show: false,
                     hide: true,
@@ -95,42 +91,75 @@
                         //otherPage: hrefCategoryProduct, //for product [undefined or value not other]
             };
             $(document).ready(function () {
-//                $('[data-rel]').menu(optionsMenu);
+                //$('[data-rel]').menu(optionsMenu);
             });
         </script>
         <h3>Simple Menu</h3>
         <nav data-rel="menu" class="menu">
             <ul class="sub-0 nav nav-pills">
                 <li>
-                    <a href="http://menu:8080/sub00">sub00</a>
-                    <ul class="sub-1 nav">
+                    <a href="http://menu:8080/sub0">sub0</a>
+                    <ul class="dropdown-menu nav sub-1">
                         <li class="column_1">
-                            <a href="http://menu:8080/sub00/sub000">sub10</a>
-                            <ul class="sub-3 nav">
+                            <a href="http://menu:8080/sub0/sub00">sub00</a>
+                            <ul class="dropdown-menu nav sub-2">
                                 <li>
-                                    <a href="http://menu:8080/sub00/sub000">sub10</a>
+                                    <a href="http://menu:8080/sub0/sub00/sub000">sub000</a>
+                                    <ul class="dropdown-menu nav sub-3">
+                                        <li>
+                                            <a href="http://menu:8080/sub0/sub00/sub000/sub0001">sub0001</a>
+                                            <ul class="dropdown-menu nav sub-4">
+                                                <li>
+                                                    <a href="http://menu:8080/sub0/sub00/sub000/sub00001">sub00001</a>
+                                                    <ul class="dropdown-menu nav sub-5">
+                                                        <li>
+                                                            <a href="http://menu:8080/sub0/sub00/sub000/sub000001">sub000001</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="http://menu:8080/sub0/sub00/sub000/sub000002">sub000002</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="http://menu:8080/sub0/sub00/sub000/sub000003">sub000003</a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <a href="http://menu:8080/sub0/sub00/sub000/sub00002">sub00002</a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://menu:8080/sub0/sub00/sub000/sub00003">sub00003</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="http://menu:8080/sub0/sub00/sub000/sub0002">sub0002</a>
+                                        </li>
+                                        <li>
+                                            <a href="http://menu:8080/sub0/sub00/sub000/sub0003">sub0003</a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li>
-                                    <a href="http://menu:8080/sub01/sub010">sub11</a>
+                                    <a href="http://menu:8080/sub01/sub001">sub001</a>
                                 </li>
                                 <li>
-                                    <a href="http://menu:8080/sub02/sub020">sub12</a>
+                                    <a href="http://menu:8080/sub02/sub002">sub002</a>
                                 </li>
                             </ul>
                         </li>
                         <li class="column_2">
-                            <a href="http://menu:8080/sub01/sub010">sub11</a>
+                            <a href="http://menu:8080/sub01/sub01">sub11</a>
                         </li>
                         <li class="column_3">
-                            <a href="http://menu:8080/sub02/sub020">sub12</a>
+                            <a href="http://menu:8080/sub02/sub02">sub12</a>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <a href="http://menu:8080/sub01">sub01</a>
+                    <a href="http://menu:8080/sub1">sub1</a>
                 </li>
                 <li>
-                    <a href="http://menu:8080/sub02">sub02</a>
+                    <a href="http://menu:8080/sub2">sub2</a>
                 </li>
             </ul>
         </nav>

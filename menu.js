@@ -1,4 +1,3 @@
-/*plugin menu for main menu shop*/
 (function ($) {
     Array.prototype.sortUnique = function () {
         var arr = this.sort(function (a, b) {
@@ -134,15 +133,15 @@
                                     var currC = columnsObj.filter('.' + opt.levels[i].columnClassPref + n),
                                             $this = $('<' + opt.levels[i].itemColumn + '>', {
                                                 'data-column': n,
-                                                'style': 'width: ' + opt.levels[i].widthColumn + 'px',
+                                                'style': 'width: ' + opt.levels[i].widthColumn + 'px; box-sizing: content-box;',
                                                 'class': opt.levels[i].itemColumnClass
                                             })
                                             .append('<' + opt.levels[i].wrapperColumn + ' class="' + opt.levels[i].wrapperColumnClass + '" style="display: block;">')
                                             .appendTo(drop.css('float', 'left'));
 
                                     $this.children().append(currC.clone(true));
-                                    var w = opt.levels[i].relative ? numbColumnL * opt.levels[i].widthColumn : '';
-                                    drop.css({width: w}).data('width', w);
+                                    var w = numbColumnL * opt.levels[i].widthColumn;
+                                    drop.css({width: w, 'box-sizing': 'content-box'}).data('width', w);
                                 });
                                 columnsObj.remove();
                             }
@@ -150,7 +149,7 @@
                     }
 
                 methods._getElements.call(menu, opt);
-                methods._outerDefinePosition.call(menu, opt, true);
+                methods._outerDefinePosition.call(menu, opt);
 
                 //show subs which have option show: true
                 for (var i in opt.levels) {
@@ -195,39 +194,44 @@
                                 opt.levels[i].triggerOn = 'click';
                             opt.items[i].off(opt.levels[i].triggerOn + '.' + $.menu.nS).on(opt.levels[i].triggerOn + '.' + $.menu.nS, function (e) {
                                 e.stopPropagation();
-                                if (opt.levels[i].closeIdenticLevel)
-                                    methods.hide.call($(this).siblings('.' + opt.hoverClass), i, opt, e);
-                                if (!$(this).data('show'))
-                                    methods.show.call($(this), i, opt, e);
-                                else
-                                    methods.hide.call($(this), i, opt, e);
-                            });
+                                var $this = $(this);
+
+                                if (opt.levels[i].closeIdenticLevel && !$this.data('close'))
+                                    methods.hide.call($this.closest(opt.drops[i]).find(opt.items[i]).not($this), i, opt, e);
+
+                                methods.show.call($this, i, opt, e);
+                            }
+                            );
                         }
                         if (opt.levels[+i + 1] && opt.levels[+i + 1].hide && opt.levels[i].triggerOff)
                             opt.items[i].off(opt.levels[i].triggerOff + '.' + $.menu.nS).on(opt.levels[i].triggerOff + '.' + $.menu.nS, function (e) {
-                                methods.hide.call($(this), i, opt, e);
+                                methods.hide.call($(this).data('close', true), i, opt, e);
                             });
                     })(i);
 
                 //show subs which have active link
                 if (opt.showActive && itemsActive)
                     methods.show.call(itemsActive.data('firstActive', true), null, opt);
-            });
+            }
+            );
         },
         show: function (j, opt, e) {
-            opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
-            return $(this).addClass(opt.hoverClass).each(function () {
-                var i = j ? j : methods._getIndex.call($(this), opt.items);
-                var sub = $(this).data('show', true).find(opt.drops[+i + 1]);
+            if (!existsN(this))
+                return false;
+            opt = opt ? opt : this.closest('[data-menu]').data('menu');
+            return this.addClass(opt.hoverClass).each(function () {
+                var $this = $(this),
+                        i = j ? j : methods._getIndex.call($this, opt.items),
+                        sub = $this.find(opt.drops[+i + 1]);
 
                 if (!existsN(sub))
                     return false;
 
-                if (sub.data('timeout'))
-                    clearTimeout(sub.data('timeout'));
                 (function (i, sub) {
-                    sub.data().timeout = setTimeout($.proxy(function () {
-                        this.css('width', $(this).data('width')).addClass(opt.openClass)[opt.levels[i].effectOn](!j ? 0 : opt.levels[i].durationOn, function () {
+                    methods._clearTimeouts.call($this);
+
+                    $this.data().timeout = setTimeout($.proxy(function () {
+                        this.css({'width': this.data('width'), 'box-sizing': 'content-box'}).addClass(opt.openClass)[opt.levels[i].effectOn](!j ? 0 : opt.levels[i].durationOn, function () {
                             methods.sizeDrop.call($(this).css('overflow', ''));
                             methods.sizeDrop.call($(this).find('.' + opt.openClass + ':visible').last());
                         });
@@ -237,32 +241,43 @@
                 i = undefined;
             });
         },
-        hide: function (i, opt, e) {
-            opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
+        hide: function () {
             var _hide = arguments.callee;
-            return $(this).removeClass(opt.hoverClass).each(function () {
-                i = i ? i : methods._getIndex.call($(this), opt.items);
-                var sub = $(this).data('show', false).find(opt.drops[+i + 1]),
-                        timeout = sub.data('timeout');
+            if (!existsN(this))
+                return false;
+            (function (i, opt, e) {
+                methods._clearTimeouts.call(this);
+                this.data().timeoutClose = setTimeout($.proxy(function () {
+                    opt = opt ? opt : $(this).closest('[data-menu]').data('menu');
+                    $(this).removeClass(opt.hoverClass).each(function () {
+                        i = i ? i : methods._getIndex.call($(this), opt.items);
+                        var sub = $(this).find(opt.drops[+i + 1]);
 
-                if (sub.data('firstActive'))
-                    return false;
+                        if (!existsN(sub))
+                            return false;
 
-                clearTimeout(timeout);
-                (function (i, sub) {
-                    sub.removeClass(opt.openClass).stop()[opt.levels[i].effectOff](opt.levels[i].durationOff, function () {
-                        var $this = $(this).css({
-                            height: '',
-                            width: ''
-                        });
-                        methods.sizeDrop.call($this.data('parent').filter(':visible'));
-                        if (opt.levels[i].closeInsideLevel)
-                            _hide.call($this.find('.' + opt.hoverClass).first());
+                        if (sub.data('firstActive'))
+                            return false;
+
+                        (function (i, sub) {
+                            sub.removeClass(opt.openClass).stop()[opt.levels[i].effectOff](opt.levels[i].durationOff, function () {
+                                var $this = $(this).css({
+                                    height: '',
+                                    width: '',
+                                    'box-sizing': 'content-box'
+                                });
+                                delete $this.data('close');
+                                methods.sizeDrop.call($this.data('parent').filter(':visible'));
+                                if (opt.levels[i].closeInsideLevel)
+                                    _hide.call($this.find('.' + opt.hoverClass).first());
+                            });
+                        })(i, sub);
+
+                        i = undefined;
                     });
-                })(i, sub);
-
-                i = undefined;
-            });
+                }, this), opt.levels[i].delayClose);
+            }).apply(this, arguments);
+            return this;
         },
         sizeDrop: function () {
             var width = 0,
@@ -274,7 +289,8 @@
 
                 $this.css({
                     height: '',
-                    width: ''
+                    width: '',
+                    'box-sizing': 'content-box'
                 });
                 if (data.relative && data.parent) {
                     var h = actual.call($this, 'height');
@@ -282,7 +298,8 @@
                     width = width === data.width ? data.width + data.marginSide : (width > data.width ? width + data.marginSide : data.width);
                     $this.css({
                         height: height,
-                        width: width
+                        width: width,
+                        'box-sizing': 'content-box'
                     });
 
                     arguments.callee.call(data.parent);
@@ -333,10 +350,10 @@
                                     'z-index': level
                                 });
 
-                            if (!exists('.item-level' + level))
-                                opt.items[level] = opt.drops[level].children().addClass('item-level' + level).css('position', 'static');
+                            if (!exists('.menu-item-level' + level))
+                                opt.items[level] = opt.drops[level].children().addClass('menu-item-level' + level).css('position', 'static');
                             else //for second call after render menu columns
-                                opt.items[level] = opt.drops[level].find('.item-level' + level).css('position', 'static');
+                                opt.items[level] = opt.drops[level].find('.menu-item-level' + level).css('position', 'static');
 
                             opt.anchors[level] = opt.items[level].find('a:first');
                             level++;
@@ -358,9 +375,9 @@
                 var children = this.children();
 
                 this.find('[data-column]').css('float', pos);
-                if (pos === 'left')
-                    if (exists('.item-level' + i))
-                        children = this.find('.item-level' + i);
+
+                if (exists('.menu-item-level' + i))
+                    children = this.find('.menu-item-level' + i);
 
                 if (opt.levels[i].position)
                     children.css('position', opt.levels[i].position);
@@ -370,8 +387,8 @@
                             w = $this.data('parent').data('widthF'),
                             children = $this.children();
 
-                    if (exists('.item-level' + i))
-                        children = $this.find('.item-level' + i);
+                    if (exists('.menu-item-level' + i))
+                        children = $this.find('.menu-item-level' + i);
 
                     if ($this.data('relative'))
                         $this.css(pos, w).data('marginSide', w);
@@ -380,61 +397,60 @@
                 });
             }
         },
-        _position: function (menu, item, drop, dropsW, direction) {
-            var menuW = menu.width(),
+        _position: function (menu, item, drop, dropsW, opt) {
+            var menuW = menu.outerWidth(),
                     menuL = menu.offset().left,
                     $thisL = item.offset().left,
-                    $thisW = item.width();
+                    $thisW = item.outerWidth(),
+                    direction = opt.direction;
 
-            drop.removeClass('left-drop right-drop').css({'left': 'auto', 'right': 'auto', 'position': 'absolute'});
+            drop.removeClass(opt.classPosL).removeClass(opt.classPosR).css({'left': 'auto', 'right': 'auto', 'position': 'absolute'});
 
             var l = menuW - ($thisL - menuL);
             if ((l < dropsW && l > $thisL - menuL + $thisW || direction === 'left') && direction !== 'right') {
                 var left = $thisL - menuL;
-                drop.css('left', left).addClass('left-drop');
+                drop.css('left', left).addClass(opt.classPosL);
                 methods._positionSub.call(drop, 'left', menu.data('menu'));
             } else if (!direction || direction === 'right') {
                 var right = menuW - ($thisL - menuL) - $thisW;
-                drop.css({'right': right}).addClass('right-drop');
+                drop.css({'right': right}).addClass(opt.classPosR);
                 methods._positionSub.call(drop, 'right', menu.data('menu'));
             }
         },
-        _outerDefinePosition: function (opt, repeat) {
+        _outerDefinePosition: function (opt) {
             var _self = this;
 
             opt.items[0].each(function () {
                 var $this = $(this),
-                        drop = $this.find(opt.drops[1]),
-                        dropss = drop,
-                        sub0 = drop;
+                        drop = $this.find(opt.drops[1]);
 
                 if (existsN(drop)) {
+                    var dropss = drop.data({'widthF': opt.levels[0].widthColumn, width: drop.data('width') ? drop.data('width') : opt.levels[0].widthColumn}),
+                            sub0 = drop;
+
                     _self.css('overflow', 'hidden');
 
                     for (var i = 2; i < opt.countLevels; i++)
                         if (opt.levels && opt.levels[i] && opt.levels[i].relative) {
                             drop = drop.add(drop.find(opt.drops[i]).first());
-                            dropss = dropss.add(dropss.find(opt.drops[i]));
+                            var _drop = dropss.find(opt.drops[i]);
+                            _drop.data({'widthF': opt.levels[i].widthColumn, width: _drop.data('width') ? _drop.data('width') : opt.levels[i].widthColumn});
                         }
 
-                    if (!repeat)
-                        dropss.each(function () {
-                            var $this = $(this),
-                                    w = $this.width();
-
-                            $this.data({'widthF': w, width: w});
-                        });
-
-                    drop.show();
+                    drop.css('display', 'block');
 
                     var last = drop.last();
+                    methods._position(_self, $this, sub0, last.outerWidth() + Math.abs(last.offset().left), opt);
 
-                    methods._position(_self, $this, sub0, last.width() + Math.abs(last.offset().left), opt.levels[1].direction);
-
-                    drop.hide();
+                    drop.css('display', '');
                     _self.css('overflow', '');
                 }
             });
+        },
+        _clearTimeouts: function () {
+            clearTimeout(this.data('timeoutClose'));
+            clearTimeout(this.data('timeout'));
+            return this;
         }
     };
     $.fn.menu = function (method) {
@@ -464,6 +480,7 @@
             defaultLevel: {
                 container: 'ul',
                 delay: 200,
+                delayClose: 100,
                 durationOn: 200,
                 durationOff: 100,
                 effectOn: 'slideDown',
@@ -477,14 +494,16 @@
                 maxCountColumn: 5,
                 triggerOn: 'mouseenter',
                 triggerOff: 'mouseleave',
-                relative: false,
-                position: null,
-                direction: null,
+                relative: true,
+                position: 'static',
                 show: false,
                 hide: true,
                 closeIdenticLevel: true,
                 closeInsideLevel: false
             },
+            direction: null,
+            classPosL: 'dropdown-menu-left',
+            classPosR: 'dropdown-menu-right',
             hoverClass: 'hover',
             activeClass: 'active',
             openClass: 'open',
@@ -495,10 +514,8 @@
             $.extend(this.dP, opt);
         };
     }
-    ;
     $.menu = new menuInit;
     $(document).ready(function () {
         $('[data-rel="menu"]').menu();
     });
 })(jQuery);
-/*plugin menu end*/
