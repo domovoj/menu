@@ -294,8 +294,9 @@
                 });
                 if (data.relative && data.parent) {
                     var h = actual.call($this, 'height');
-                    height = height > h ? height : h;
-                    width = width === data.width ? data.width + data.marginSide : (width > data.width ? width + data.marginSide : data.width);
+                    height = height > h ? height : h,
+                    mS = data.marginSide ? data.marginSide : 0;
+                    width = width === data.width ? data.width + mS : (width > data.width ? width + mS : data.width);
                     $this.css({
                         height: height,
                         width: width,
@@ -345,10 +346,8 @@
                             if (opt.levels[level].relative)
                                 opt.drops[level].css('position', 'absolute');
                             else
-                                opt.drops[level].css({
-                                    'position': 'relative',
-                                    'z-index': level
-                                });
+                                opt.drops[level].css('position', 'relative');
+                            opt.drops[level].css('z-index', level);
 
                             if (!exists('.menu-item-level' + level))
                                 opt.items[level] = opt.drops[level].children().addClass('menu-item-level' + level).css('position', 'static');
@@ -379,8 +378,8 @@
                 if (exists('.menu-item-level' + i))
                     children = this.find('.menu-item-level' + i);
 
-                if (opt.levels[i].position)
-                    children.css('position', opt.levels[i].position);
+                if (opt.levels[i].relative)
+                    children.css('position', 'relative');
 
                 this.find(opt.drops[i]).css({'left': 'auto', 'right': 'auto', 'top': 0}).each(function () {
                     var $this = $(this),
@@ -392,8 +391,8 @@
 
                     if ($this.data('relative'))
                         $this.css(pos, w).data('marginSide', w);
-                    if (opt.levels[i].position)
-                        children.css('position', opt.levels[i].position);
+                    if (opt.levels[i].relative)
+                        children.css('position', 'relative');
                 });
             }
         },
@@ -495,7 +494,6 @@
                 triggerOn: 'mouseenter',
                 triggerOff: 'mouseleave',
                 relative: true,
-                position: 'static',
                 show: false,
                 hide: true,
                 closeIdenticLevel: true,
