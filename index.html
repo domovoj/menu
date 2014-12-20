@@ -1,167 +1,186 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset = "UTF-8">
-        <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="/bootstrap.min.css"/>
-        <link rel="stylesheet" type="text/css" href="/bootstrap-theme.css"/>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script src="/menu.js"></script>
-        <style>
-            *{margin: 0;padding: 0;}
-            body{overflow-y: scroll;}
-            ul{list-style: none;}
+<head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/bootstrap-theme.css"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="/menu.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
 
-            .menu > ul > li{float: left;}
-        </style>
+        body {
+            overflow-y: scroll;
+        }
 
-        <script>
-        </script>
-    </head>
-    <body>
-        <script type="text/javascript">
-            var optionsMenu = {
-                levels: {
-                    0: {
-                        container: 'ul',
-                        vertical: false
-                    },
-                    1: {
-                        container: '.sub-1',
-                        delay: 200,
-                        durationOn: 200,
-                        durationOff: 100,
-                        effectOn: 'fadeIn',
-                        effectOff: 'slideUp',
-                        relative: true,
-                        //position: 'relative',
-                        show: false
-                                //hide: false
-                    },
-                    2: {
-                        container: '.sub-2',
-                        delay: 200,
-                        durationOn: 200,
-                        durationOff: 100,
-                        effectOn: 'slideDown',
-                        effectOff: 'slideUp',
-                        show: false,
-                        columnClassPref: 'column_',
-                        relative: true
-                    },
-                    3: {
-                        container: '.sub-3',
-                        columnClassPref: 'column_',
-                        relative: true
-                    },
-                    4: {
-                        container: '.sub-4',
-                        effectOn: 'fadeIn',
-                        columnClassPref: 'column_',
-                        relative: true
-                    },
-                    5: {
-                        container: '.sub-5',
-                        columnClassPref: 'column_',
-                        relative: true
-                    }
-                },
-                defaultLevel: {
-                    delay: 200,
-                    durationOn: 200,
-                    durationOff: 100,
-                    effectOn: 'slideDown',
-                    effectOff: 'slideUp',
-                    widthColumn: 150,
-                    maxCountColumn: 20000,
-                    relative: false,
-                    show: false,
-                    hide: true,
-                    itemColumn: 'li',
-                    wrapperColumn: 'ul',
-                    position: null,
-                    columnClassPref: null
-                            //direction: 'left' //when menu place left and drops go to right (if vertical menu)
-                },
-                hoverClass: 'hover', //active class
-                activeClass: 'active', //active class
+        ul {
+            list-style: none;
+        }
 
-                showActive: true
-                        //otherPage: hrefCategoryProduct, //for product [undefined or value not other]
-            };
-            $(document).ready(function () {
-                //$('[data-rel]').menu(optionsMenu);
-            });
-        </script>
-        <h3>Simple Menu</h3>
-        <nav data-rel="menu" class="menu">
-            <ul class="sub-0 nav nav-pills">
-                <li>
-                    <a href="http://menu/sub0">sub0</a>
-                    <ul class="dropdown-menu nav sub-1">
-                        <li class="column_1">
-                            <a href="http://menu/sub0/sub00">sub00</a>
-                            <ul class="dropdown-menu nav sub-2">
+        .menu > ul > li {
+            float: left;
+        }
+    </style>
+
+    <script>
+    </script>
+</head>
+<body>
+<script type="text/javascript">
+    var optionsMenu = {
+        levels: {
+            0: {
+                container: 'ul',
+                vertical: false
+            },
+            1: {
+                container: '.sub-1',
+                delay: 200,
+                durationOn: 200,
+                durationOff: 100,
+                effectOn: 'fadeIn',
+                effectOff: 'slideUp',
+                relative: true,
+                //position: 'relative',
+                show: false
+                //hide: false
+            },
+            2: {
+                container: '.sub-2',
+                delay: 200,
+                durationOn: 200,
+                durationOff: 100,
+                effectOn: 'slideDown',
+                effectOff: 'slideUp',
+                show: false,
+                columnClassPref: 'column_',
+                relative: true
+            },
+            3: {
+                container: '.sub-3',
+                columnClassPref: 'column_',
+                relative: true
+            },
+            4: {
+                container: '.sub-4',
+                effectOn: 'fadeIn',
+                columnClassPref: 'column_',
+                relative: true
+            },
+            5: {
+                container: '.sub-5',
+                columnClassPref: 'column_',
+                relative: true
+            }
+        },
+        defaultLevel: {
+            delay: 200,
+            durationOn: 200,
+            durationOff: 100,
+            effectOn: 'slideDown',
+            effectOff: 'slideUp',
+            widthColumn: 150,
+            maxCountColumn: 20000,
+            relative: false,
+            show: false,
+            hide: true,
+            itemColumn: 'li',
+            wrapperColumn: 'ul',
+            position: null,
+            columnClassPref: null
+            //direction: 'left' //when menu place left and drops go to right (if vertical menu)
+        },
+        hoverClass: 'hover', //active class
+        activeClass: 'active', //active class
+
+        showActive: true
+        //otherPage: hrefCategoryProduct, //for product [undefined or value not other]
+    };
+    $(document).ready(function () {
+        //$('[data-rel]').menu(optionsMenu);
+    });
+</script>
+<h3>Simple Menu</h3>
+<nav data-rel="menu" class="menu">
+    <ul class="sub-0 nav nav-pills">
+        <li>
+            <a href="http://menu/sub0">sub0</a>
+            <ul class="dropdown-menu nav sub-1">
+                <li class="column_1">
+                    <a href="http://menu/sub0/sub00">sub00</a>
+                    <ul class="dropdown-menu nav sub-2">
+                        <li>
+                            <a href="http://menu/sub0/sub00/sub000">sub000</a>
+                            <ul class="dropdown-menu nav sub-3">
                                 <li>
-                                    <a href="http://menu/sub0/sub00/sub000">sub000</a>
-                                    <ul class="dropdown-menu nav sub-3">
+                                    <a href="http://menu/sub0/sub00/sub000/sub0000">sub0000</a>
+                                    <ul class="dropdown-menu nav sub-4">
                                         <li>
-                                            <a href="http://menu/sub0/sub00/sub000/sub0001">sub0001</a>
-                                            <ul class="dropdown-menu nav sub-4">
+                                            <a href="http://menu/sub0/sub00/sub000/sub00000">sub00000</a>
+                                            <ul class="dropdown-menu nav sub-5">
                                                 <li>
-                                                    <a href="http://menu/sub0/sub00/sub000/sub00001">sub00001</a>
-                                                    <ul class="dropdown-menu nav sub-5">
-                                                        <li>
-                                                            <a href="http://menu/sub0/sub00/sub000/sub000001">sub000001</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://menu/sub0/sub00/sub000/sub000002">sub000002</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://menu/sub0/sub00/sub000/sub000003">sub000003</a>
-                                                        </li>
-                                                    </ul>
+                                                    <a href="http://menu/sub0/sub00/sub000/sub00000/sub000000">sub000000</a>
                                                 </li>
                                                 <li>
-                                                    <a href="http://menu/sub0/sub00/sub000/sub00002">sub00002</a>
+                                                    <a href="http://menu/sub0/sub00/sub000/sub00000/sub000001">sub000001</a>
                                                 </li>
                                                 <li>
-                                                    <a href="http://menu/sub0/sub00/sub000/sub00003">sub00003</a>
+                                                    <a href="http://menu/sub0/sub00/sub000/sub00000/sub000002">sub000002</a>
                                                 </li>
                                             </ul>
                                         </li>
                                         <li>
-                                            <a href="http://menu/sub0/sub00/sub000/sub0002">sub0002</a>
+                                            <a href="http://menu/sub0/sub00/sub000/sub00001">sub00001</a>
                                         </li>
                                         <li>
-                                            <a href="http://menu/sub0/sub00/sub000/sub0003">sub0003</a>
+                                            <a href="http://menu/sub0/sub00/sub000/sub00002">sub00002</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="http://menu/sub01/sub001">sub001</a>
+                                    <a href="http://menu/sub0/sub00/sub000/sub0001">sub0001</a>
                                 </li>
                                 <li>
-                                    <a href="http://menu/sub02/sub002">sub002</a>
+                                    <a href="http://menu/sub0/sub00/sub000/sub0002">sub0002</a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="column_2">
-                            <a href="http://menu/sub01/sub01">sub11</a>
+                        <li>
+                            <a href="http://menu/sub01/sub001">sub001</a>
                         </li>
-                        <li class="column_3">
-                            <a href="http://menu/sub02/sub02">sub12</a>
+                        <li>
+                            <a href="http://menu/sub02/sub002">sub002</a>
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="http://menu/sub1">sub1</a>
+                <li class="column_2">
+                    <a href="http://menu/sub01/sub01">sub01</a>
                 </li>
-                <li>
-                    <a href="http://menu/sub2">sub2</a>
+                <li class="column_3">
+                    <a href="http://menu/sub02/sub02">sub02</a>
                 </li>
             </ul>
-        </nav>
-    </body>
+        </li>
+        <li>
+            <a href="http://menu/sub1">sub1</a>
+            <ul class="dropdown-menu nav sub-1">
+                <li>
+                    <a href="http://menu/sub1/sub10">sub10</a>
+                </li>
+                <li>
+                    <a href="http://menu/sub1/sub10">sub10</a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="http://menu/sub2">sub2</a>
+        </li>
+    </ul>
+</nav>
+</body>
 </html>
